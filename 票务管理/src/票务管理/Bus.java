@@ -2,6 +2,8 @@ package ∆±ŒÒπ‹¿Ì;
 
 import java.sql.Timestamp;
 
+
+
 public class Bus {
 	private int bid;
 	private String origin;
@@ -12,7 +14,7 @@ public class Bus {
 	private int price;
 	
 	public Bus(int id, String tOrigin, String tDestination, Timestamp tStart_time,
-			int tRest_seats, int tTotal_seats, int tPrice) throws Exception {
+			int tRest_seats, int tTotal_seats, int tPrice) {
 		bid = id;
 		origin = tOrigin;
 		destination = tDestination;

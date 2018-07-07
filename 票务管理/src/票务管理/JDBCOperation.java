@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import com.mysql.jdbc.*;
 
 public class JDBCOperation {
-	private static Connection getConnection() {
+	public static Connection getConnection() {
 		String driver = "com.mysql.jdbc.Driver";
 		String url = "jdbc:mysql://localhost:3306/tickets_system";
 		String username = "root";
@@ -30,7 +30,7 @@ public class JDBCOperation {
 	}
 	
 	
-	private static int insert(Customer customer) {
+	public static int insert(Customer customer) {
 		Connection connection = getConnection();
 		int i = 0;
 		String sql = "insert into customers (cid, cname, phone) values(?,?,?)";
@@ -48,7 +48,7 @@ public class JDBCOperation {
 		}
 		return i;		
 	}
-	private static int insert(Bus bus) {
+	public static int insert(Bus bus) {
 		Connection connection = getConnection();
 		int i = 0;
 		String sql = "insert into buses (bid, origin, destination, start_time, "
@@ -71,7 +71,7 @@ public class JDBCOperation {
 		}
 		return i;
 	}
-	private static int insert(Order order) {
+	public static int insert(Order order) {
 		Connection connection = getConnection();
 		int i = 0;
 		String sql = "insert into orders (oid, cid, bid, number, order_time) "
@@ -94,7 +94,7 @@ public class JDBCOperation {
 	}
 	
 	
-	private static int update(Customer customer) {
+	public static int update(Customer customer) {
 		Connection connection = getConnection();
 		int i = 0;
 		String sql = "update customers set "
@@ -112,7 +112,7 @@ public class JDBCOperation {
 		}
 		return i;
 	}
-	private static int update(Bus bus) {
+	public static int update(Bus bus) {
 		Connection connection = getConnection();
 		int i = 0;
 		String sql = "update buses set "
@@ -134,7 +134,7 @@ public class JDBCOperation {
 		}
 		return i;
 	}
-	private static int update(Order order) {
+	public static int update(Order order) {
 		Connection connection = getConnection();
 		int i = 0;
 		String sql = "update orders set "
@@ -155,10 +155,10 @@ public class JDBCOperation {
 	}
 	
 	
-	private static int delete(Customer customer) {
+	public static int delete(Customer customer) {
 		Connection connection = getConnection();
 		int i = 0;
-		String sql = "delete from customers where cid='" + customer.getCid() + "'";
+		String sql = "delete from customers where cid=" + customer.getCid() + "";
 		PreparedStatement pstmt;
 		try {
 			pstmt = (PreparedStatement) connection.prepareStatement(sql);
@@ -170,10 +170,10 @@ public class JDBCOperation {
 		}
 		return i;
 	}
-	private static int delete(Bus bus) {
+	public static int delete(Bus bus) {
 		Connection connection = getConnection();
 		int i = 0;
-		String sql = "delete from buses where cid='" + bus.getBid() + "'";
+		String sql = "delete from buses where cid=" + bus.getBid() + "";
 		PreparedStatement pstmt;
 		try {
 			pstmt = (PreparedStatement) connection.prepareStatement(sql);
@@ -185,10 +185,10 @@ public class JDBCOperation {
 		}
 		return i;
 	}
-	private static int delete(Order order) {
+	public static int delete(Order order) {
 		Connection connection = getConnection();
 		int i = 0;
-		String sql = "delete from orders where cid='" + order.getOid() + "'";
+		String sql = "delete from orders where cid=" + order.getOid() + "";
 		PreparedStatement pstmt;
 		try {
 			pstmt = (PreparedStatement) connection.prepareStatement(sql);
@@ -202,7 +202,7 @@ public class JDBCOperation {
 	}
 	
 	
-	private static ArrayList<Customer> customersQuery() {
+	public static ArrayList<Customer> customersQuery() {
 		Connection connection = getConnection();
 		String sql = "select * from customers";
 		PreparedStatement pstmt;
@@ -223,7 +223,7 @@ public class JDBCOperation {
 		}
 		return customers;
 	}
-	private static ArrayList<Bus> busesQuery() {
+	public static ArrayList<Bus> busesQuery() {
 		Connection connection = getConnection();
 		String sql = "select * from buses";
 		PreparedStatement pstmt;
@@ -248,7 +248,7 @@ public class JDBCOperation {
 		}
 		return buses;
 	}
-	private static ArrayList<Order> ordersQuery() {
+	public static ArrayList<Order> ordersQuery() {
 		Connection connection = getConnection();
 		String sql = "select * from orders";
 		PreparedStatement pstmt;

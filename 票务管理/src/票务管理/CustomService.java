@@ -3,7 +3,14 @@ package ∆±ŒÒπ‹¿Ì;
 import java.util.ArrayList;
 
 public class CustomService {
+	private static CustomService instance;
 	private int lastCid;
+	
+	public static CustomService getInstance() {
+		if (instance == null)
+			instance = new CustomService();
+		return instance;
+	}
 	
 	public CustomService() {
 		ArrayList<Customer> customers = JDBCOperation.customersQuery();
@@ -14,19 +21,10 @@ public class CustomService {
 	}
 	
 	
-	public boolean checkCidExist(int cid) {
-		ArrayList<Customer> customers = JDBCOperation.customersQuery();
-		boolean exist = false;
-		for (Customer customer : customers) {
-			if (customer.getCid() == cid)
-				exist = true;
-		}
-		return exist;
-	}
-	
-	
-	public void register(String cname, String phone) {
-		JDBCOperation.insert(new Customer(lastCid++, cname, phone));
+	public Customer register(String cname, String phone) {
+		Customer customer = new Customer(lastCid++, cname, phone);
+		JDBCOperation.insert(customer);
+		return customer;
 	}
 	
 	

@@ -6,7 +6,15 @@ import java.util.Iterator;
 
 
 public class TicketService {
+	private static TicketService instance;
 	private int lastOid;
+	
+	
+	public static TicketService getInstance() {
+		if (instance == null)
+			instance = new TicketService();
+		return instance;
+	}
 	
 	public TicketService() {
 		ArrayList<Order> orders = JDBCOperation.ordersQuery();
@@ -17,7 +25,15 @@ public class TicketService {
 	}
 	
 	
-	
+	public boolean checkCidExist(int cid) {
+		ArrayList<Customer> customers = JDBCOperation.customersQuery();
+		boolean exist = false;
+		for (Customer customer : customers) {
+			if (customer.getCid() == cid)
+				exist = true;
+		}
+		return exist;
+	}
 	public boolean checkBidExist(int bid) {
 		ArrayList<Bus> buses = JDBCOperation.busesQuery();
 		boolean exist = false;
@@ -40,22 +56,12 @@ public class TicketService {
 	
 	public ArrayList<Bus> busesQuery(String origin, String destination, Timestamp start_time) {
 		ArrayList<Bus> buses = JDBCOperation.busesQuery();
-		if (start_time == null) {
-			Iterator<Bus> it = buses.iterator();
-			while (it.hasNext()) {
-				Bus bus = it.next();
-				if (!(origin == bus.getOrigin() && destination == bus.getDestination()
-						&& bus.getStart_time().after(new Timestamp(System.currentTimeMillis()))))
-					it.remove();
-			}
-		} else {
-			Iterator<Bus> it = buses.iterator();
-			while (it.hasNext()) {
-				Bus bus = it.next();
-				if (!(origin == bus.getOrigin() && destination == bus.getDestination()
-						&& bus.getStart_time().after(start_time)))
-					it.remove();
-			}
+		Iterator<Bus> it = buses.iterator();
+		while (it.hasNext()) {
+			Bus bus = it.next();
+			if (!(origin == bus.getOrigin() && destination == bus.getDestination()
+					&& bus.getStart_time().after(start_time)))
+				it.remove();
 		}
 		return buses;
 	}

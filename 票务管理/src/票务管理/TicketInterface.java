@@ -2,14 +2,20 @@ package 票务管理;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.PrimitiveIterator;
 import java.util.Scanner;
 import java.util.regex.*;
 
 
 public class TicketInterface {
-
-	public static boolean menu(CustomService customService, TicketService ticketService) {
+	private CustomerService customerService;
+	private TicketService ticketService;
+	
+	public TicketInterface() {
+		customerService.getInstance();
+		ticketService.getInstance();
+	}
+	
+	public boolean menu() {
 		System.out.println("1.用户注册");
 		System.out.println("2.查询班次");
 		System.out.println("3.车票订购");
@@ -27,11 +33,11 @@ public class TicketInterface {
 		int choose = Integer.parseInt(select);
 		switch (choose) {
 		case 1: {
-			customerRegister(customService);
+			customerRegister();
 			break;
 		}
 		case 2: {
-			busesQuery(ticketService);
+			busesQuery();
 			break;
 		}
 		case 3: {
@@ -51,9 +57,10 @@ public class TicketInterface {
 		input.close();
 		return true;
 	}
+
+
 	
-	
-	public static void customerRegister(CustomService customService) {
+	public void customerRegister() {
 		Scanner input = new Scanner(System.in);
 		System.out.print("请输入注册用户名（长度不得超过30个字符）：");
 		String namePatten = "[\u4e00-\u9fa5\\w]{0,30}";
@@ -69,7 +76,7 @@ public class TicketInterface {
 			System.out.print("输入手机号码不合法，请重新输入：");
 			phone = input.nextLine();
 		}
-		Customer customer = customService.register(cname, phone);
+		Customer customer = customerService.register(cname, phone);
 		if (customer == null)
 			System.out.println("用户注册失败！");
 		else
@@ -79,7 +86,7 @@ public class TicketInterface {
 	}
 	
 	
-	private static int checkTimeStampType(String string) {
+	private int checkTimeStampType(String string) {
 		String timeStampPatten = "^(\\d{4}-\\d{2}-\\d{2})";
 		if (string == null) return 0;
 		else if (!Pattern.matches(timeStampPatten, string)) return 1;
@@ -93,7 +100,7 @@ public class TicketInterface {
 			else return 3;
 		}
 	}
-	private static void printBuses(ArrayList<Bus> buses) {
+	private void printBuses(ArrayList<Bus> buses) {
 		if (buses == null)
 			System.out.println("没有找到符合查询条件的班次");
 		else {
@@ -105,7 +112,7 @@ public class TicketInterface {
 			}
 		}
 	}
-	public static void busesQuery(TicketService ticketService) {
+	public void busesQuery() {
 		Scanner input = new Scanner(System.in);
 		System.out.print("请输入出发地：");
 		String origin = input.nextLine();
@@ -132,20 +139,49 @@ public class TicketInterface {
 		input.close();
 	}
 	
-	private static boolean isNumeric(String numString) {
+	private boolean isNumeric(String numString) {
 		String numPatten = "\\d{0,11}";
 		return Pattern.matches(numPatten, numString);
 	}
-	private static boolean cisIsValid(String numString) {
-		if (!isNumeric(numString))
+	private boolean cidIsValid(String cidString) {
+		if (!isNumeric(cidString))
 			return false;
-		int tCid = Integer.valueOf(numString);
-		
+		int tCid = Integer.valueOf(cidString);
+		return customerService.checkCidExist(tCid);
 	}
-	public static void buyTickets(TicketService ticketService) {
+	private boolean bidIsValid(String bidString) {
+		if (!isNumeric(bidString))
+			return false;
+		int tBid = Integer.valueOf(bidString);
+		return ticketService.checkBidExist(tBid);
+	}
+	public void buyTickets(TicketService ticketService) {
 		Scanner input = new Scanner(System.in);
 		System.out.print("请输入要购票的用户cid:");
 		String cidString = input.nextLine();
-		while (!)
+		while (!cidIsValid(cidString)) {
+			System.out.println("输入格式不正确或cid不存在，请重新输入：");
+			cidString = input.nextLine();
+		}
+		int cid = Integer.valueOf(cidString);
+		System.out.print("请输入要购票的班次bid:");
+		String bidString = input.nextLine();
+		while (!bidIsValid(bidString)) {
+			System.out.println("输入格式不正确或bid不存在，请重新输入：");
+			cidString = input.nextLine();
+		}
+		int bid = Integer.valueOf(bidString);
+		System.out.print("请输入要购票的数量:");
+		String numString = input.nextLine();
+		while (!isNumeric(numString)) {
+			System.out.println("请输入正确的数量：");
+			numString = input.nextLine();
+		}
+		int number = Integer.valueOf(numString);
+		if (ticketService.buyTickets(cid, bid, number))
+			System.out.println("购票成功！");
+		else
+			System.out.println("购票失败！");
+		input.close();
 	}
 }

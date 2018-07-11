@@ -2,22 +2,33 @@ package ∆±ŒÒπ‹¿Ì;
 
 import java.util.ArrayList;
 
-public class CustomService {
-	private static CustomService instance;
+public class CustomerService {
+	private static CustomerService instance = null;
 	private int lastCid;
 	
-	public static CustomService getInstance() {
+	public CustomerService getInstance() {
 		if (instance == null)
-			instance = new CustomService();
+			instance = new CustomerService();
 		return instance;
 	}
 	
-	public CustomService() {
+	public CustomerService() {
 		ArrayList<Customer> customers = JDBCOperation.customersQuery();
 		if (customers == null) 
 			lastCid = 0;
 		else
 			lastCid = customers.get(customers.size() - 1).getCid();
+	}
+	
+	
+	public boolean checkCidExist(int cid) {
+		ArrayList<Customer> customers = JDBCOperation.customersQuery();
+		boolean exist = false;
+		for (Customer customer : customers) {
+			if (customer.getCid() == cid)
+				exist = true;
+		}
+		return exist;
 	}
 	
 	

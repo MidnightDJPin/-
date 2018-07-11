@@ -6,11 +6,11 @@ import java.util.Iterator;
 
 
 public class TicketService {
-	private static TicketService instance;
+	private static TicketService instance = null;
 	private int lastOid;
 	
 	
-	public static TicketService getInstance() {
+	public TicketService getInstance() {
 		if (instance == null)
 			instance = new TicketService();
 		return instance;
@@ -25,15 +25,6 @@ public class TicketService {
 	}
 	
 	
-	public boolean checkCidExist(int cid) {
-		ArrayList<Customer> customers = JDBCOperation.customersQuery();
-		boolean exist = false;
-		for (Customer customer : customers) {
-			if (customer.getCid() == cid)
-				exist = true;
-		}
-		return exist;
-	}
 	public boolean checkBidExist(int bid) {
 		ArrayList<Bus> buses = JDBCOperation.busesQuery();
 		boolean exist = false;

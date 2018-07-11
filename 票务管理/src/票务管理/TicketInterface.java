@@ -2,8 +2,10 @@ package 票务管理;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.PrimitiveIterator;
 import java.util.Scanner;
 import java.util.regex.*;
+
 
 public class TicketInterface {
 
@@ -77,7 +79,7 @@ public class TicketInterface {
 	}
 	
 	
-	public static int checkTimeStampType(String string) {
+	private static int checkTimeStampType(String string) {
 		String timeStampPatten = "^(\\d{4}-\\d{2}-\\d{2})";
 		if (string == null) return 0;
 		else if (!Pattern.matches(timeStampPatten, string)) return 1;
@@ -91,7 +93,7 @@ public class TicketInterface {
 			else return 3;
 		}
 	}
-	public static void printBuses(ArrayList<Bus> buses) {
+	private static void printBuses(ArrayList<Bus> buses) {
 		if (buses == null)
 			System.out.println("没有找到符合查询条件的班次");
 		else {
@@ -128,5 +130,22 @@ public class TicketInterface {
 		ArrayList<Bus> buses = ticketService.busesQuery(origin, destination, start_time);
 		printBuses(buses);
 		input.close();
+	}
+	
+	private static boolean isNumeric(String numString) {
+		String numPatten = "\\d{0,11}";
+		return Pattern.matches(numPatten, numString);
+	}
+	private static boolean cisIsValid(String numString) {
+		if (!isNumeric(numString))
+			return false;
+		int tCid = Integer.valueOf(numString);
+		
+	}
+	public static void buyTickets(TicketService ticketService) {
+		Scanner input = new Scanner(System.in);
+		System.out.print("请输入要购票的用户cid:");
+		String cidString = input.nextLine();
+		while (!)
 	}
 }

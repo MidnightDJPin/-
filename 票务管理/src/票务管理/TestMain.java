@@ -7,7 +7,11 @@ import java.util.regex.*;
 public class TestMain {
 
 	public static void main(String[] args) {
-		System.out.println(new Timestamp(System.currentTimeMillis()));
+		String numPatten = "\\d{0,1}";
+		Scanner input = new Scanner(System.in);
+		String testString = input.nextLine();
+		System.out.println(Pattern.matches(numPatten, testString));
+		input.close();
 	}
 
 }

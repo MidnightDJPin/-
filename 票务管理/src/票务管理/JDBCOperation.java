@@ -12,15 +12,14 @@ import com.mysql.jdbc.*;
 
 public class JDBCOperation {
 	public static Connection getConnection() {
-		String driver = "com.mysql.jdbc.Driver";
-		String url = "jdbc:mysql://localhost:3306/tickets_system";
+		String driver = "com.mysql.cj.jdbc.Driver";
+		String url = "jdbc:mysql://localhost:3306/tickets_system?useUnicode=true&characterEncoding=utf-8&useSSL=true";
 		String username = "root";
 		String password = "";
 		Connection connection = null;
 		try {
 			Class.forName(driver);
-			connection = (Connection) DriverManager.getConnection(url, username,
-					password);
+			connection = DriverManager.getConnection(url, username, password);
 		} catch(ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
@@ -188,7 +187,7 @@ public class JDBCOperation {
 	public static int delete(Order order) {
 		Connection connection = getConnection();
 		int i = 0;
-		String sql = "delete from orders where cid=" + order.getOid() + "";
+		String sql = "delete from orders where oid=" + order.getOid() + "";
 		PreparedStatement pstmt;
 		try {
 			pstmt = (PreparedStatement) connection.prepareStatement(sql);

@@ -33,7 +33,7 @@ public class CustomerService {
 	
 	
 	public Customer register(String cname, String phone) {
-		Customer customer = new Customer(lastCid++, cname, phone);
+		Customer customer = new Customer(++lastCid, cname, phone);
 		JDBCOperation.insert(customer);
 		return customer;
 	}

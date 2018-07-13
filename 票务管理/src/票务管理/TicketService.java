@@ -50,7 +50,7 @@ public class TicketService {
 		Iterator<Bus> it = buses.iterator();
 		while (it.hasNext()) {
 			Bus bus = it.next();
-			if (!(origin == bus.getOrigin() && destination == bus.getDestination()
+			if (!(origin.equals(bus.getOrigin()) && destination.equals(bus.getDestination())
 					&& bus.getStart_time().after(start_time)))
 				it.remove();
 		}
@@ -85,7 +85,8 @@ public class TicketService {
 		else {
 			bus.setRest_seats(bus.getRest_seats() - number);
 			JDBCOperation.update(bus);
-			JDBCOperation.insert(new Order(lastOid + 1, cid, bid, number, null));
+			JDBCOperation.insert(new Order(++lastOid, cid, bid, number, null));
+			System.out.print("订单号："+ lastOid + ",车次编号为" + bid + "的班车");
 			return true;
 		}
 	}

@@ -12,8 +12,8 @@ public class TicketInterface {
 	private TicketService ticketService;
 	
 	public TicketInterface() {
-		customerService.getInstance();
-		ticketService.getInstance();
+		customerService = new CustomerService();
+		ticketService = new TicketService();
 	}
 	
 	public boolean menu() {
@@ -58,7 +58,7 @@ public class TicketInterface {
 			return false;
 		}
 		}
-		input.close();
+//		input.close();
 		return true;
 	}
 
@@ -86,32 +86,34 @@ public class TicketInterface {
 		else
 			System.out.println("用户注册成功，cid=" + customer.getCid()
 			+ " cname=" + customer.getCname() + " phone=" + customer.getPhone());
-		input.close();
+//		input.close();
 	}
 	
 	
-	private int checkTimeStampType(String string) {
+	private boolean checkTimeStampType(String string) {
 		String timeStampPatten = "^(\\d{4}-\\d{2}-\\d{2})";
-		if (string == null) return 0;
-		else if (!Pattern.matches(timeStampPatten, string)) return 1;
+		if (string.equals("")) return true;
+		else if (!Pattern.matches(timeStampPatten, string)) return false;
 		else {
 			string += " 00:00:00";
 			Timestamp timestamp = Timestamp.valueOf(string);
 			Timestamp currentTimeStamp = new Timestamp(System.currentTimeMillis());
-			timestamp.setHours(currentTimeStamp.getHours());
-			timestamp.setMinutes(currentTimeStamp.getMinutes() + 5);
-			if (timestamp.after(currentTimeStamp)) return 2;
-			else return 3;
+			if (timestamp.getYear() < currentTimeStamp.getYear()) return false;
+			else if (timestamp.getYear() > currentTimeStamp.getYear()) return true;
+			else if (timestamp.getMonth() < currentTimeStamp.getMonth()) return false;
+			else if (timestamp.getMonth() > currentTimeStamp.getMonth()) return true;
+			else if (timestamp.getDay() < currentTimeStamp.getDay()) return false;
+			else return true;
 		}
 	}
 	private void printBuses(ArrayList<Bus> buses) {
-		if (buses == null)
+		if (buses == null || buses.size() == 0)
 			System.out.println("没有找到符合查询条件的班次信息");
 		else {
-			System.out.println("班次编号\t出发地\t目的地\t出发时间\t余座\t票价\t");
+			System.out.println("班次编号\t出发地\t目的地\t出发时间\t\t\t余座\t票价\t");
 			for (Bus bus : buses) {
 				System.out.println(bus.getBid() + "\t" + bus.getOrigin() + "\t" + bus.getDestination()
-				+ "\t" + bus.getStart_time().toString().substring(0, 15)
+				+ "\t" + bus.getStart_time().toString().substring(0, 16)
 				+ "\t" + bus.getRest_seats() + "\t" + bus.getPrice() + "\t");
 			}
 		}
@@ -124,23 +126,25 @@ public class TicketInterface {
 		String destination = input.nextLine();
 		System.out.print("请输入出发日期（日期格式:yy-MM-dd,若无需求可直接enter跳过）：");
 		String start_timeString = input.nextLine();
-		while (checkTimeStampType(start_timeString) % 2 == 1) {
+		while (!checkTimeStampType(start_timeString)) {
 			System.out.print("输入格式不正确或输入日期早于当前");
 			start_timeString = input.nextLine();
 		}
 		Timestamp start_time;
 		Timestamp currentTimeStamp = new Timestamp(System.currentTimeMillis());
-		if (start_timeString == null)
+		if (start_timeString.equals(""))
 			start_time = Timestamp.valueOf(currentTimeStamp.toString());
 		else {
 			start_timeString += " 00:00:00";
 			start_time = Timestamp.valueOf(start_timeString);
-			start_time.setHours(currentTimeStamp.getHours());
-			start_time.setMinutes(currentTimeStamp.getMinutes() + 5);
+			if (start_time.before(currentTimeStamp)) {
+				start_time.setHours(currentTimeStamp.getHours());
+				start_time.setMinutes(currentTimeStamp.getMinutes() + 5);
+			}
 		}
 		ArrayList<Bus> buses = ticketService.busesQuery(origin, destination, start_time);
 		printBuses(buses);
-		input.close();
+//		input.close();
 	}
 	
 	private boolean isNumeric(String numString) {
@@ -186,18 +190,18 @@ public class TicketInterface {
 			System.out.println("购票成功！");
 		else
 			System.out.println("购票失败！");
-		input.close();
+//		input.close();
 	}
 	
 	
 	private void printOrder(ArrayList<Order> orders) {
-		if (orders == null)
+		if (orders == null || orders.size() == 0)
 			System.out.println("没有找到符合查询条件的订单信息！");
 		else {
 			System.out.println("订单编号\t用户编号\t班次编号\t票数\t操作时间\t");
 			for (Order order : orders) {
-				System.out.print(order.getOid() + "\t" + order.getCid() + "\t" + order.getBid() + "\t"
-						+ order.getNumber() + "\t" + order.getOrder_time().toString().substring(0,15) + "\t");
+				System.out.println(order.getOid() + "\t" + order.getCid() + "\t" + order.getBid() + "\t"
+						+ order.getNumber() + "\t" + order.getOrder_time().toString().substring(0,16) + "\t");
 			}
 		}
 	}
@@ -212,7 +216,7 @@ public class TicketInterface {
 		int cid = Integer.valueOf(cidString);
 		ArrayList<Order> orders = ticketService.ordersQuery(cid);
 		printOrder(orders);
-		input.close();
+//		input.close();
 	}
 	
 	private boolean oidIsValid(String oidString) {
@@ -226,12 +230,12 @@ public class TicketInterface {
 		System.out.print("请输入要退票的订单oid:");
 		String oidString = input.nextLine();
 		while (!oidIsValid(oidString)) {
-			System.out.print("输入格式不正确或cid不存在，请重新输入：");
+			System.out.print("输入格式不正确或oid不存在，请重新输入：");
 			oidString = input.nextLine();
 		}
 		int oid = Integer.valueOf(oidString);
 		ticketService.refund(oid);
 		System.out.println("退票成功！");
-		input.close();
+//		input.close();
 	}
 }

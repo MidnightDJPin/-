@@ -1,7 +1,6 @@
 package Æ±Îñ¹ÜÀí;
 
 import java.util.Scanner;
-import java.sql.Timestamp;
 import java.util.regex.*;
 
 public class TestMain {

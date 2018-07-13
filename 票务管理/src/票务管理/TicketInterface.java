@@ -6,6 +6,7 @@ import java.util.Scanner;
 import java.util.regex.*;
 
 
+
 public class TicketInterface {
 	private CustomerService customerService;
 	private TicketService ticketService;
@@ -41,13 +42,16 @@ public class TicketInterface {
 			break;
 		}
 		case 3: {
-			
+			buyTickets();
+			break;
 		}
 		case 4: {
-			
+			orderQuery();
+			break;
 		}
 		case 5: {
-			
+			refund();
+			break;
 		}
 		case 6: {
 			input.close();
@@ -102,7 +106,7 @@ public class TicketInterface {
 	}
 	private void printBuses(ArrayList<Bus> buses) {
 		if (buses == null)
-			System.out.println("没有找到符合查询条件的班次");
+			System.out.println("没有找到符合查询条件的班次信息");
 		else {
 			System.out.println("班次编号\t出发地\t目的地\t出发时间\t余座\t票价\t");
 			for (Bus bus : buses) {
@@ -140,7 +144,7 @@ public class TicketInterface {
 	}
 	
 	private boolean isNumeric(String numString) {
-		String numPatten = "\\d{0,11}";
+		String numPatten = "\\d{1,11}";
 		return Pattern.matches(numPatten, numString);
 	}
 	private boolean cidIsValid(String cidString) {
@@ -155,26 +159,26 @@ public class TicketInterface {
 		int tBid = Integer.valueOf(bidString);
 		return ticketService.checkBidExist(tBid);
 	}
-	public void buyTickets(TicketService ticketService) {
+	public void buyTickets() {
 		Scanner input = new Scanner(System.in);
 		System.out.print("请输入要购票的用户cid:");
 		String cidString = input.nextLine();
 		while (!cidIsValid(cidString)) {
-			System.out.println("输入格式不正确或cid不存在，请重新输入：");
+			System.out.print("输入格式不正确或cid不存在，请重新输入：");
 			cidString = input.nextLine();
 		}
 		int cid = Integer.valueOf(cidString);
 		System.out.print("请输入要购票的班次bid:");
 		String bidString = input.nextLine();
 		while (!bidIsValid(bidString)) {
-			System.out.println("输入格式不正确或bid不存在，请重新输入：");
+			System.out.print("输入格式不正确或bid不存在，请重新输入：");
 			cidString = input.nextLine();
 		}
 		int bid = Integer.valueOf(bidString);
 		System.out.print("请输入要购票的数量:");
 		String numString = input.nextLine();
 		while (!isNumeric(numString)) {
-			System.out.println("请输入正确的数量：");
+			System.out.print("请输入正确的数量：");
 			numString = input.nextLine();
 		}
 		int number = Integer.valueOf(numString);
@@ -182,6 +186,52 @@ public class TicketInterface {
 			System.out.println("购票成功！");
 		else
 			System.out.println("购票失败！");
+		input.close();
+	}
+	
+	
+	private void printOrder(ArrayList<Order> orders) {
+		if (orders == null)
+			System.out.println("没有找到符合查询条件的订单信息！");
+		else {
+			System.out.println("订单编号\t用户编号\t班次编号\t票数\t操作时间\t");
+			for (Order order : orders) {
+				System.out.print(order.getOid() + "\t" + order.getCid() + "\t" + order.getBid() + "\t"
+						+ order.getNumber() + "\t" + order.getOrder_time().toString().substring(0,15) + "\t");
+			}
+		}
+	}
+	public void orderQuery() {
+		Scanner input = new Scanner(System.in);
+		System.out.print("请输入要查询订单的用户cid:");
+		String cidString = input.nextLine();
+		while (!cidIsValid(cidString)) {
+			System.out.print("输入格式不正确或cid不存在，请重新输入：");
+			cidString = input.nextLine();
+		}
+		int cid = Integer.valueOf(cidString);
+		ArrayList<Order> orders = ticketService.ordersQuery(cid);
+		printOrder(orders);
+		input.close();
+	}
+	
+	private boolean oidIsValid(String oidString) {
+		if (!isNumeric(oidString))
+			return false;
+		int tOid = Integer.valueOf(oidString);
+		return ticketService.checkOidExist(tOid);
+	}
+	public void refund() {
+		Scanner input = new Scanner(System.in);
+		System.out.print("请输入要退票的订单oid:");
+		String oidString = input.nextLine();
+		while (!oidIsValid(oidString)) {
+			System.out.print("输入格式不正确或cid不存在，请重新输入：");
+			oidString = input.nextLine();
+		}
+		int oid = Integer.valueOf(oidString);
+		ticketService.refund(oid);
+		System.out.println("退票成功！");
 		input.close();
 	}
 }
